@@ -4,6 +4,7 @@
   "version": "11.0.0",
   "type": "module",
   "scripts": {
+    "prebuild": "bash restore-source.sh",
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
