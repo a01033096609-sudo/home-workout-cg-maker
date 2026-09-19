@@ -22,22 +22,22 @@ patchFile('src/App.jsx', [
   ],
   [
     "const productionGateLabel=candidateMode?'후보 GLB · 검수 전용':character==='calibration'?'검수 전용 · 최종 녹화 금지':isProxyCharacter?'남성 프록시 · QA 전용':character==='neutral'?'절차형 캐릭터 · 테스트 녹화 가능':!assetRigReady?'FINAL GLB CHECK':!qaReady?'RUN 5-MOTION QA':'PRODUCTION READY'",
-    "const productionGateLabel=candidateMode?'후보 GLB · 검수 전용':character==='calibration'?'검수 전용 · 최종 녹화 금지':isProxyCharacter?'남성 프록시 · QA 전용':baselineFemale?'여성 강사 · 기존 기준본 복구':character==='neutral'?'절차형 캐릭터 · 테스트 녹화 가능':!assetRigReady?'FINAL GLB CHECK':!qaReady?'RUN 5-MOTION QA':'PRODUCTION READY'",
+    "const productionGateLabel=candidateMode?'후보 GLB · 검수 전용':character==='calibration'?'검수 전용 · 최종 녹화 금지':isProxyCharacter?'남성 프록시 · QA 전용':baselineFemale?'여성 강사 · Phase 1.9 기준':character==='neutral'?'절차형 캐릭터 · 테스트 녹화 가능':!assetRigReady?'FINAL GLB CHECK':!qaReady?'RUN 5-MOTION QA':'PRODUCTION READY'",
     'female production label'
   ],
   [
     "['female-hd','여성 강사 HD']",
-    "['female-hd','여성 강사 · 기존 기준']",
+    "['female-hd','여성 강사 · 조정 완료']",
     'female selector label'
   ],
   [
     "남성/여성 HD는 각 기본 GLB 경로를 사용하고, <b>리그 테스트</b>는 앱에 포함된 캘리브레이션 GLB를 즉시 불러옵니다.",
-    "여성 강사는 기존 조정 완료 기준 캐릭터를 즉시 사용합니다. 여성 GLB를 별도로 불러오면 같은 슬롯에서 교체 검수할 수 있고, <b>리그 테스트</b>는 캘리브레이션 GLB를 사용합니다.",
+    "여성 강사는 Phase 1.9에서 조정 완료한 절차형 3D 프리셋을 기본으로 사용합니다. 별도 여성 GLB가 없어도 정상 동작하며, <b>리그 테스트</b>는 캘리브레이션 GLB를 사용합니다.",
     'female help text'
   ],
   [
     "<div className={'status '+(status.loaded?'ok':'warn')}>{status.loaded?'GLB 로드됨 · 휴머노이드 본 매핑 '+(status.mapped?'완료':'부분'):'GLB 미탑재 시 절차형 Rig로 자동 테스트'}</div>",
-    "<div className={'status '+(baselineFemale||status.loaded?'ok':'warn')}>{baselineFemale?'기존 여성 강사 기준본 사용 중 · 조정 완료 모션 적용':status.loaded?'GLB 로드됨 · 휴머노이드 본 매핑 '+(status.mapped?'완료':'부분'):'GLB 미탑재 시 절차형 Rig로 자동 테스트'}</div>",
+    "<div className={'status '+(baselineFemale||status.loaded?'ok':'warn')}>{baselineFemale?'Phase 1.9 여성 프리셋 사용 중 · 조정 완료 모션 적용':status.loaded?'GLB 로드됨 · 휴머노이드 본 매핑 '+(status.mapped?'완료':'부분'):'GLB 미탑재 시 절차형 Rig로 자동 테스트'}</div>",
     'female status'
   ],
   [
@@ -57,10 +57,6 @@ patchFile('src/App.jsx', [
   ]
 ])
 
-const recoverySnippet = `(async()=>{const DB='home-workout-cg-model-assets',STORE='models',SLOT='female-hd';const db=await new Promise((ok,fail)=>{const r=indexedDB.open(DB,1);r.onsuccess=()=>ok(r.result);r.onerror=()=>fail(r.error)});const row=await new Promise((ok,fail)=>{const tx=db.transaction(STORE,'readonly'),q=tx.objectStore(STORE).get(SLOT);q.onsuccess=()=>ok(q.result);q.onerror=()=>fail(q.error)});db.close();if(!row?.blob){alert('이 브라우저 보관함에 female-hd GLB가 없습니다.');return}const u=URL.createObjectURL(row.blob),a=document.createElement('a');a.href=u;a.download=row.name||'female-instructor-hd.glb';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);alert('여성 GLB 내보내기를 시작했습니다.')} )();`
-fs.mkdirSync('public',{recursive:true})
-fs.writeFileSync('public/RECOVER_OLD_FEMALE.txt', recoverySnippet+'\n')
-
 patchFile('src/components/CharacterStage.jsx', [
   [
     "const wantsGLB=(character==='male-hd'||character==='female-hd'||character==='male-proxy'||character==='calibration')&&!failed",
@@ -69,4 +65,4 @@ patchFile('src/components/CharacterStage.jsx', [
   ]
 ])
 
-console.log('Baseline female instructor restoration applied. Model export + recovery helper enabled.')
+console.log('Phase 1.9 female procedural baseline restored. Model export enabled.')
