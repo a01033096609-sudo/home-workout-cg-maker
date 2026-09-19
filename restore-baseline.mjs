@@ -44,8 +44,22 @@ patchFile('src/App.jsx', [
     "<ProductionReadiness character={character} status={status} qaResults={qaSweepResults} stored={!!storedModels[character]}/>",
     "{!baselineFemale&&<ProductionReadiness character={character} status={status} qaResults={qaSweepResults} stored={!!storedModels[character]}/>} ",
     'female readiness panel'
+  ],
+  [
+    "const clearStoredModel=async()=>{if(character!=='male-hd'&&character!=='female-hd')return;try{clearModelQA(currentModelFingerprint());await removeModelAsset(character);setStoredModels(v=>{const n={...v};delete n[character];return n});if(modelUrl?.startsWith('blob:'))URL.revokeObjectURL(modelUrl);setModelUrl(null);setModelName('');setStatus({loaded:false});setDiagnostics(null);setModelStoreMsg('저장된 GLB 삭제됨')}catch{setModelStoreMsg('저장 모델 삭제에 실패했습니다.')}}\n const updateModelCalibration",
+    "const clearStoredModel=async()=>{if(character!=='male-hd'&&character!=='female-hd')return;try{clearModelQA(currentModelFingerprint());await removeModelAsset(character);setStoredModels(v=>{const n={...v};delete n[character];return n});if(modelUrl?.startsWith('blob:'))URL.revokeObjectURL(modelUrl);setModelUrl(null);setModelName('');setStatus({loaded:false});setDiagnostics(null);setModelStoreMsg('저장된 GLB 삭제됨')}catch{setModelStoreMsg('저장 모델 삭제에 실패했습니다.')}}\n const exportStoredModel=()=>{const row=storedModels[character];if(!row?.blob){setModelStoreMsg('현재 슬롯에 내보낼 GLB가 없습니다.');return}const url=URL.createObjectURL(row.blob),a=document.createElement('a');a.href=url;a.download=row.name||\`${character}.glb\`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);setModelStoreMsg(\`${character==='female-hd'?'여성':'남성'} GLB 파일로 내보냄\`)}\n const updateModelCalibration",
+    'model export function'
+  ],
+  [
+    "<div className=\"modelVault\"><span>브라우저 자산 보관함</span><b>남성 {storedModels['male-hd']?'✓':'-'} · 여성 {storedModels['female-hd']?'✓':'-'}</b>{(character==='male-hd'||character==='female-hd')&&storedModels[character]&&<button onClick={clearStoredModel}>현재 슬롯 삭제</button>}</div>",
+    "<div className=\"modelVault\"><span>브라우저 자산 보관함</span><b>남성 {storedModels['male-hd']?'✓':'-'} · 여성 {storedModels['female-hd']?'✓':'-'}</b>{(character==='male-hd'||character==='female-hd')&&storedModels[character]&&<><button onClick={exportStoredModel}>현재 GLB 내보내기</button><button onClick={clearStoredModel}>현재 슬롯 삭제</button></>}</div>",
+    'model export button'
   ]
 ])
+
+const recoverySnippet = `(async()=>{const DB='home-workout-cg-model-assets',STORE='models',SLOT='female-hd';const db=await new Promise((ok,fail)=>{const r=indexedDB.open(DB,1);r.onsuccess=()=>ok(r.result);r.onerror=()=>fail(r.error)});const row=await new Promise((ok,fail)=>{const tx=db.transaction(STORE,'readonly'),q=tx.objectStore(STORE).get(SLOT);q.onsuccess=()=>ok(q.result);q.onerror=()=>fail(q.error)});db.close();if(!row?.blob){alert('이 브라우저 보관함에 female-hd GLB가 없습니다.');return}const u=URL.createObjectURL(row.blob),a=document.createElement('a');a.href=u;a.download=row.name||'female-instructor-hd.glb';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);alert('여성 GLB 내보내기를 시작했습니다.')} )();`
+fs.mkdirSync('public',{recursive:true})
+fs.writeFileSync('public/RECOVER_OLD_FEMALE.txt', recoverySnippet+'\n')
 
 patchFile('src/components/CharacterStage.jsx', [
   [
@@ -55,4 +69,4 @@ patchFile('src/components/CharacterStage.jsx', [
   ]
 ])
 
-console.log('Baseline female instructor restoration applied.')
+console.log('Baseline female instructor restoration applied. Model export + recovery helper enabled.')
