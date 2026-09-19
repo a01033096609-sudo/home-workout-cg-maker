@@ -10,4 +10,6 @@ if [ "$ACTUAL" != "$EXPECTED" ]; then
   exit 23
 fi
 tar -xJf "$TMP/app.tar.xz" -C .
+node restore-baseline.mjs
 echo "Source bundle restored: $ACTUAL"
+echo "Female instructor baseline restored."
