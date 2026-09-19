@@ -105,3 +105,19 @@ patchFile('src/components/CharacterStage.jsx', [
 ])
 
 console.log('Floor-motion renderer enabled for hip-bridge and bird-dog with fixed floor contacts.')
+
+
+patchFile('src/components/ProceduralCharacter.jsx', [
+  [
+    "<mesh position={[hipX,hipY+.98,hipZ-.01]}><sphereGeometry args={[.19,22,22]}/><Skin tone={skinTone}/></mesh>\n    <mesh position={[hipX,hipY+1.18,hipZ]}><sphereGeometry args={[.21,22,22]}/><meshStandardMaterial color=\"#252525\"/></mesh>",
+    "<mesh position={[hipX,hipY+.84,hipZ]}><capsuleGeometry args={[.075,.10,6,14]}/><Skin tone={skinTone}/></mesh>\n    <mesh position={[hipX,hipY+.98,hipZ-.01]}><sphereGeometry args={[.19,24,24]}/><Skin tone={skinTone}/></mesh>\n    <mesh position={[hipX,hipY+1.055,hipZ-.025]} scale={[1.04,.72,1.04]}><sphereGeometry args={[.195,24,24]}/><meshStandardMaterial color=\"#252525\" roughness={.8}/></mesh>",
+    'female neck and hair cap'
+  ],
+  [
+    "<Limb a={lShoulder} b={lElbow} r={.09} mat={<Skin tone={skinTone}/>}/><Limb a={lElbow} b={lWrist} r={.075} mat={<Skin tone={skinTone}/>}/>\n    <Limb a={rShoulder} b={rElbow} r={.09} mat={<Skin tone={skinTone}/>}/><Limb a={rElbow} b={rWrist} r={.075} mat={<Skin tone={skinTone}/>}/>",
+    "<mesh position={lShoulder}><sphereGeometry args={[.105,18,18]}/><Cloth color={topColor}/></mesh><mesh position={rShoulder}><sphereGeometry args={[.105,18,18]}/><Cloth color={topColor}/></mesh>\n    <Limb a={lShoulder} b={lElbow} r={.09} mat={<Skin tone={skinTone}/>}/><Limb a={lElbow} b={lWrist} r={.075} mat={<Skin tone={skinTone}/>}/><mesh position={lWrist}><sphereGeometry args={[.072,16,16]}/><Skin tone={skinTone}/></mesh>\n    <Limb a={rShoulder} b={rElbow} r={.09} mat={<Skin tone={skinTone}/>}/><Limb a={rElbow} b={rWrist} r={.075} mat={<Skin tone={skinTone}/>}/><mesh position={rWrist}><sphereGeometry args={[.072,16,16]}/><Skin tone={skinTone}/></mesh>",
+    'shoulder caps and hands'
+  ]
+])
+
+console.log('Procedural instructor mesh polish applied: neck, hair cap, shoulders, hands.')
