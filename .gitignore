@@ -1,0 +1,12 @@
+node_modules/
+dist/
+package-lock.json
+
+# Restored from bundle-xz/ at build time (see restore-source.sh) — regenerated, not tracked directly.
+/src/
+/public/models/male-instructor-proxy.glb
+/public/models/calibration-humanoid.glb
+/public/models/README.md
+/public/models/candidates/
+/public/models/PUT_MALE_GLB_HERE.txt
+/public/models/PUT_FEMALE_GLB_HERE.txt
