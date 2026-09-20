@@ -34,8 +34,8 @@ jobs:
           })
           const page=await browser.newPage()
           await page.setViewport({width:1600,height:1000,deviceScaleFactor:1})
-          await page.goto('https://home-workout-cg-maker-production.up.railway.app/?motionqa='+Date.now(),{waitUntil:'networkidle2',timeout:120000})
-          await new Promise(r=>setTimeout(r,3000))
+          await page.goto('https://home-workout-cg-maker-production.up.railway.app/?motionqa='+Date.now(),{waitUntil:'domcontentloaded',timeout:45000})
+          await page.waitForSelector('canvas',{timeout:30000})\n          await new Promise(r=>setTimeout(r,7000))
           const allButtons=await page.$$eval('button',bs=>bs.map(b=>b.textContent?.trim()).filter(Boolean))
           fs.writeFileSync('button-texts.json',JSON.stringify(allButtons,null,2))
           async function clickMotion(name){
