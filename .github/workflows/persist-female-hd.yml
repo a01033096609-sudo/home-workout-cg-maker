@@ -1,0 +1,42 @@
+name: Persist Female HD Model
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/persist-female-hd.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  persist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download and verify female HD GLB
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/models
+          curl -fL --retry 4 --retry-delay 2 \
+            'https://v3b.fal.media/files/b/0aab2388/jumQAcWvMtvW9Zj5aMaCQ_rigged_character.glb' \
+            -o public/models/female-instructor-hd.glb
+          test "$(stat -c%s public/models/female-instructor-hd.glb)" = "11083968"
+          echo "c44f0a78faa20ea442dc022e10922c5fea0997c24501f09d55ab22ca680a2a62  public/models/female-instructor-hd.glb" | sha256sum -c -
+          test "$(head -c 4 public/models/female-instructor-hd.glb)" = "glTF"
+      - name: Commit production female model
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "home-workout-cg-maker-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/models/female-instructor-hd.glb
+          if git diff --cached --quiet; then
+            echo "Female HD GLB already persisted."
+            exit 0
+          fi
+          git commit -m "Persist reconstructed female HD GLB"
+          git push origin HEAD:main
