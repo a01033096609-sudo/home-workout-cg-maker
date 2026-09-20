@@ -24,7 +24,7 @@ jobs:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         shell: bash
         run: |
-          cat > /tmp/qa.mjs <<'NODE'
+          cat > qa.mjs <<'NODE'
           import puppeteer from 'puppeteer-core'
           import fs from 'node:fs'
           const browser=await puppeteer.launch({
@@ -63,7 +63,7 @@ jobs:
           fs.writeFileSync('motion-results.json',JSON.stringify(results,null,2))
           await browser.close()
           NODE
-          node /tmp/qa.mjs
+          node qa.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: female-hd-motion-qa
