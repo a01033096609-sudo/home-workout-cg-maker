@@ -1,0 +1,46 @@
+name: Verify Production Female HD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-production-female.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify deployed female GLB
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://home-workout-cg-maker-production.up.railway.app'
+          for i in {1..12}; do
+            if curl -fsSL "$URL/health" >/tmp/health.txt; then break; fi
+            sleep 5
+          done
+          cat /tmp/health.txt
+          curl -fL --retry 4 "$URL/models/female-instructor-hd.glb" -o /tmp/female.glb
+          test "$(stat -c%s /tmp/female.glb)" = "11083968"
+          echo "c44f0a78faa20ea442dc022e10922c5fea0997c24501f09d55ab22ca680a2a62  /tmp/female.glb" | sha256sum -c -
+          test "$(head -c 4 /tmp/female.glb)" = "glTF"
+      - uses: browser-actions/setup-chrome@v1
+      - name: Capture live app
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chrome || command -v chromium || command -v chromium-browser)"
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars \
+            --window-size=1600,1000 --virtual-time-budget=10000 \
+            --screenshot="$GITHUB_WORKSPACE/live-female-hd.png" \
+            "https://home-workout-cg-maker-production.up.railway.app/?qa=$GITHUB_RUN_ID"
+          test -s "$GITHUB_WORKSPACE/live-female-hd.png"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-female-hd-qa
+          path: live-female-hd.png
+          if-no-files-found: error
+          retention-days: 7
